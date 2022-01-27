@@ -32,7 +32,7 @@ public class DefaultQueryGenerator implements QueryGenerator {
     Optional<String> idColumnName = idField.map(DefaultQueryService::getColumnName);
 
     if (idColumnName.isEmpty()) {
-      throw new NoSuchIdException("There is no id in table " + tableName);
+      throw new NoSuchIdException(NO_ID_IN_TABLE_EXCEPTION + tableName);
     } else {
       return SELECT
           + getParametersString(clazz)
@@ -64,17 +64,17 @@ public class DefaultQueryGenerator implements QueryGenerator {
     Class<?> clazz = value.getClass();
     String tableName = getTableName(clazz);
     Optional<Field> idField = getIdFieldInTable(clazz);
-    Optional<String> id = idField.map(field -> getFieldValue(field, value));
+    Optional<String> idValue = idField.map(field -> getFieldValue(field, value));
     Optional<String> idColumnName = idField.map(DefaultQueryService::getColumnName);
 
-    if (id.isEmpty() || idColumnName.isEmpty()) {
-      throw new NoSuchIdException("There is no id in table " + tableName);
+    if (idValue.isEmpty() || idColumnName.isEmpty()) {
+      throw new NoSuchIdException(NO_ID_IN_TABLE_EXCEPTION + tableName);
     } else {
       return DELETE
           + FROM
           + tableName
           + WHERE
-          + idColumnName.get() + IS_EQUAL + id.get();
+          + idColumnName.get() + IS_EQUAL + idValue.get();
     }
   }
 }

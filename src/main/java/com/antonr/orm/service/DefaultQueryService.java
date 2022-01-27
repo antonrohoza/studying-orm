@@ -1,6 +1,8 @@
 package com.antonr.orm.service;
 
 import static com.antonr.orm.Constants.DELIMITER;
+import static com.antonr.orm.Constants.NOT_ORM_TABLE_EXCEPTION;
+import static com.antonr.orm.Constants.NO_FIELD_VALUE_EXCEPTION;
 
 import com.antonr.orm.annotation.Column;
 import com.antonr.orm.annotation.Id;
@@ -23,7 +25,7 @@ public class DefaultQueryService {
       field.setAccessible(true);
       return String.valueOf(field.get(value));
     } catch (Exception ex) {
-      throw new RuntimeException("No value in the field +" + field.getName());
+      throw new RuntimeException(NO_FIELD_VALUE_EXCEPTION + field.getName());
     }
   }
 
@@ -47,7 +49,7 @@ public class DefaultQueryService {
 
   private static Table getTableAnnotation(Class<?> clazz) {
     if (!clazz.isAnnotationPresent(Table.class)) {
-      throw new IllegalArgumentException(clazz.getName() + " isn't an ORM table!");
+      throw new IllegalArgumentException(clazz.getName() + NOT_ORM_TABLE_EXCEPTION);
     }
     return clazz.getAnnotation(Table.class);
   }
