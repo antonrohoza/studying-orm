@@ -1,17 +1,15 @@
-package com.antonr.orm;
+package com.antonr.orm.entity;
 
 import com.antonr.orm.annotation.Column;
-import com.antonr.orm.annotation.Table;
+import com.antonr.orm.annotation.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
-@Table
-public class TestPersonWithoutId {
+public class TestPersonWithoutTable {
 
+  @Id
   @Column(name = "person_id")
   private int id;
 

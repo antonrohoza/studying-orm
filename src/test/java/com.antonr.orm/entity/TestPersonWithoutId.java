@@ -1,19 +1,15 @@
 package com.antonr.orm.entity;
 
 import com.antonr.orm.annotation.Column;
-import com.antonr.orm.annotation.Id;
 import com.antonr.orm.annotation.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Table
-public class Person {
+public class TestPersonWithoutId {
 
-  @Id
   @Column(name = "person_id")
   private int id;
 
@@ -22,4 +18,5 @@ public class Person {
 
   @Column
   private int age;
+
 }

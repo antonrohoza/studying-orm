@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.antonr.orm.entity.Person;
+import com.antonr.orm.entity.TestPersonWithoutId;
+import com.antonr.orm.entity.TestPersonWithoutTable;
 import com.antonr.orm.exception.NoSuchIdException;
 import org.junit.jupiter.api.Test;
 
@@ -58,7 +60,7 @@ public class QueryGeneratorTest {
   }
 
   @Test
-  public void deletingWithoutTableAnnotationShouldThrowNoSuchIdException() {
+  public void deletingWithoutTableAnnotationShouldThrowIllegalArgumentException() {
 
     assertThrows(IllegalArgumentException.class,
         () -> queryGenerator.delete(new TestPersonWithoutTable(2, "B", 24)));

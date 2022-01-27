@@ -1,11 +1,13 @@
 package com.antonr.orm;
 
 import static com.antonr.orm.Constants.*;
+import static com.antonr.orm.service.DefaultQueryService.getFieldValue;
+import static com.antonr.orm.service.DefaultQueryService.getIdFieldInTable;
+import static com.antonr.orm.service.DefaultQueryService.getParametersString;
+import static com.antonr.orm.service.DefaultQueryService.getTableName;
 
-import com.antonr.orm.annotation.Column;
-import com.antonr.orm.annotation.Id;
-import com.antonr.orm.annotation.Table;
 import com.antonr.orm.exception.NoSuchIdException;
+import com.antonr.orm.service.DefaultQueryService;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -27,7 +29,7 @@ public class DefaultQueryGenerator implements QueryGenerator {
   public String findById(Serializable id, Class<?> clazz) {
     String tableName = getTableName(clazz);
     Optional<Field> idField = getIdFieldInTable(clazz);
-    Optional<String> idColumnName = idField.map(this::getColumnName);
+    Optional<String> idColumnName = idField.map(DefaultQueryService::getColumnName);
 
     if (idColumnName.isEmpty()) {
       throw new NoSuchIdException("There is no id in table " + tableName);
@@ -63,7 +65,7 @@ public class DefaultQueryGenerator implements QueryGenerator {
     String tableName = getTableName(clazz);
     Optional<Field> idField = getIdFieldInTable(clazz);
     Optional<String> id = idField.map(field -> getFieldValue(field, value));
-    Optional<String> idColumnName = idField.map(field -> getColumnName(idField.get()));
+    Optional<String> idColumnName = idField.map(DefaultQueryService::getColumnName);
 
     if (id.isEmpty() || idColumnName.isEmpty()) {
       throw new NoSuchIdException("There is no id in table " + tableName);
@@ -74,47 +76,5 @@ public class DefaultQueryGenerator implements QueryGenerator {
           + WHERE
           + idColumnName.get() + IS_EQUAL + id.get();
     }
-  }
-
-  private Optional<Field> getIdFieldInTable(Class<?> clazz) {
-    return Arrays.stream(clazz.getDeclaredFields())
-        .filter(field -> field.isAnnotationPresent(Id.class))
-        .findFirst();
-  }
-
-  private String getFieldValue(Field field, Object value) {
-    String fieldValue = "";
-    try {
-      field.setAccessible(true);
-      fieldValue = String.valueOf(field.get(value));
-    } catch (Exception ex) {
-      throw new RuntimeException("No value in the field +" + field.getName());
-    }
-    return fieldValue;
-  }
-
-  private String getTableName(Class<?> clazz) {
-    final Table tableAnnotation = getTableAnnotation(clazz);
-    String annotationName = tableAnnotation.name();
-    return !annotationName.isEmpty() ? annotationName : clazz.getSimpleName();
-  }
-
-  private Table getTableAnnotation(Class<?> clazz) {
-    if (!clazz.isAnnotationPresent(Table.class)) {
-      throw new IllegalArgumentException(clazz.getName() + " isn't a ORM table!");
-    }
-    return clazz.getAnnotation(Table.class);
-  }
-
-  private String getParametersString(Class<?> clazz) {
-    return Arrays.stream(clazz.getDeclaredFields())
-        .filter(field -> field.isAnnotationPresent(Column.class))
-        .map(this::getColumnName)
-        .collect(Collectors.joining(DELIMITER));
-  }
-
-  private String getColumnName(Field field) {
-    String columnAnnotationName = field.getDeclaredAnnotation(Column.class).name();
-    return !columnAnnotationName.isEmpty() ? columnAnnotationName : field.getName();
   }
 }

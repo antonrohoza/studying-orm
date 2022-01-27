@@ -2,9 +2,9 @@ package com.antonr.orm;
 
 public enum Constants {
   ;
+  public static final String DELIMITER = ",";
   static final String SELECT = "SELECT ";
   static final String FROM = " FROM ";
-  static final String DELIMITER = ",";
   static final String OPEN_BRACKET = " (";
   static final String CLOSE_BRACKET = ")";
   static final String WHERE = " WHERE ";
